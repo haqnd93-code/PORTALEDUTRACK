@@ -236,21 +236,21 @@ function hideMsg(el){ el.className = 'msg'; el.innerHTML=''; }
 
 async function loadData(){
   try{
-    const t = await window.storage.get(STORAGE_KEY, true);
-    teachers = t && t.value ? JSON.parse(t.value) : [];
+    const t = localStorage.getItem(STORAGE_KEY);
+    teachers = t ? JSON.parse(t) : [];
   }catch(e){ teachers = []; }
   try{
-    const p = await window.storage.get(ADMIN_KEY, true);
-    adminPass = p && p.value ? p.value : null;
+    const p = localStorage.getItem(ADMIN_KEY);
+    adminPass = p || null;
   }catch(e){ adminPass = null; }
 }
 
 async function saveTeachers(){
-  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(teachers), true); }
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(teachers)); }
   catch(e){ alert('Gagal menyimpan data. Sila cuba lagi.'); }
 }
 async function saveAdminPass(pw){
-  try{ await window.storage.set(ADMIN_KEY, pw, true); adminPass = pw; }
+  try{ localStorage.setItem(ADMIN_KEY, pw); adminPass = pw; }
   catch(e){ alert('Gagal menyimpan password admin.'); }
 }
 
