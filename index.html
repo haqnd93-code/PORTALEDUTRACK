@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>EduTrack Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#6366f1; --primary-dark:#4f46e5; --purple:#8b5cf6; --purple2:#a855f7;
+  --success:#10b981; --warning:#f59e0b; --danger:#ef4444;
+  --bg:#f1f5f9; --text:#1e293b; --border:#e2e8f0; --muted:#94a3b8;
+  --navy:#0f172a; --navy2:#1e293b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;position:relative;overflow-x:hidden;}
+
+.bg-blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.32;z-index:0;pointer-events:none;}
+.b1{width:460px;height:460px;background:linear-gradient(135deg,var(--primary),var(--purple));top:-180px;right:-150px;}
+.b2{width:420px;height:420px;background:linear-gradient(135deg,var(--purple2),var(--primary));bottom:-190px;left:-160px;}
+
+.page-wrap{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+
+.login-card{width:420px;max-width:100%;background:#fff;border-radius:28px;box-shadow:0 20px 60px rgba(15,23,42,.14);border:1px solid var(--border);overflow:hidden;animation:cardIn .5s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.login-hero{background:linear-gradient(135deg,var(--primary) 0%,var(--purple) 55%,var(--purple2) 100%);padding:38px 32px 30px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+.login-hero::before{content:'';position:absolute;top:-45%;right:-18%;width:220px;height:220px;background:rgba(255,255,255,.08);border-radius:50%;}
+.login-hero::after{content:'';position:absolute;bottom:-40%;left:-10%;width:180px;height:180px;background:rgba(255,255,255,.05);border-radius:50%;}
+.login-logo{width:62px;height:62px;border-radius:18px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;border:1px solid rgba(255,255,255,.3);position:relative;z-index:1;}
+.login-hero h1{font-size:1.45rem;font-weight:800;position:relative;z-index:1;letter-spacing:-.01em;}
+.login-hero p{font-size:.82rem;opacity:.88;margin-top:5px;position:relative;z-index:1;}
+
+.login-body{padding:30px 32px 26px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:7px;}
+.field input{width:100%;padding:12px 15px;border-radius:14px;border:1.5px solid var(--border);font-size:.9rem;font-family:inherit;background:#f8fafc;transition:.15s;}
+.field input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,.12);}
+.pass-field{position:relative;}
+.pass-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.9rem;}
+
+.btn-login{width:100%;padding:13px;border-radius:14px;background:var(--primary);color:#fff;font-weight:700;font-size:.88rem;border:none;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;}
+.btn-login:hover{background:var(--primary-dark);}
+.btn-login:disabled{opacity:.6;cursor:default;}
+
+.msg{margin-top:14px;padding:11px 14px;border-radius:12px;font-size:.8rem;font-weight:600;display:none;align-items:center;gap:8px;}
+.msg.show{display:flex;}
+.msg.error{background:#fee2e2;color:#991b1b;}
+.msg.success{background:#d1fae5;color:#065f46;}
+
+.help-text{text-align:center;font-size:.76rem;color:var(--muted);margin-top:18px;line-height:1.55;}
+
+.admin-link{position:fixed;bottom:22px;right:22px;width:46px;height:46px;border-radius:50%;background:#fff;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.08);font-size:1.05rem;color:var(--muted);z-index:2;transition:.15s;}
+.admin-link:hover{color:var(--primary);border-color:var(--primary);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:24px;width:680px;max-width:100%;max-height:88vh;overflow-y:auto;padding:26px;animation:cardIn .3s ease;}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-head h2{font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:9px;}
+.modal-close{background:#f1f5f9;border:none;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:.95rem;color:#64748b;flex-shrink:0;}
+.modal-close:hover{background:var(--border);}
+
+.auth-box{max-width:340px;margin:10px auto 4px;text-align:center;}
+.auth-box i{font-size:2rem;color:var(--primary);margin-bottom:10px;display:block;}
+.auth-box p{font-size:.83rem;color:var(--muted);margin-bottom:16px;}
+
+.btn{padding:10px 18px;border-radius:12px;cursor:pointer;font-weight:700;font-size:.82rem;border:none;display:inline-flex;align-items:center;gap:7px;transition:.15s;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-ghost{background:transparent;color:#64748b;border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:#94a3b8;}
+.btn-danger{background:#fee2e2;color:#991b1b;}
+.btn-danger:hover{background:#fecaca;}
+.btn-success{background:var(--success);color:#fff;}
+
+.section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--muted);margin:18px 0 10px;}
+.teacher-row{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:14px;margin-bottom:8px;font-size:.82rem;background:#f8fafc;}
+.teacher-row .cell-name{font-weight:700;}
+.teacher-row .cell-url{color:var(--primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.teacher-row .row-actions{display:flex;gap:6px;justify-self:end;}
+.icon-btn{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:#64748b;}
+.icon-btn:hover{border-color:var(--primary);color:var(--primary);}
+.icon-btn.del:hover{border-color:var(--danger);color:var(--danger);}
+
+.add-form{display:none;grid-template-columns:1fr 1fr;gap:10px;padding:16px;border:1.5px dashed var(--border);border-radius:16px;margin-bottom:14px;background:#fafbff;}
+.add-form.show{display:grid;}
+.add-form .full{grid-column:1/-1;}
+.add-form label{font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;display:block;margin-bottom:5px;}
+.add-form input{width:100%;padding:10px 13px;border-radius:11px;border:1.5px solid var(--border);font-size:.85rem;font-family:inherit;background:#fff;}
+.add-form input:focus{outline:none;border-color:var(--primary);}
+.add-form .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:2px;}
+
+.empty-state{text-align:center;padding:26px 10px;color:var(--muted);font-size:.85rem;}
+.empty-state i{font-size:1.8rem;display:block;margin-bottom:8px;color:var(--border);}
+
+.top-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.top-actions .badge-count{font-size:.72rem;font-weight:700;color:var(--muted);}
+.settings-line{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-top:1px solid var(--border);margin-top:16px;}
+.settings-line span{font-size:.82rem;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="bg-blob b1"></div>
+<div class="bg-blob b2"></div>
+
+<div class="page-wrap">
+  <div class="login-card">
+    <div class="login-hero">
+      <div class="login-logo"><i class="fas fa-graduation-cap"></i></div>
+      <h1>EduTrack Portal</h1>
+      <p>Satu portal, semua guru, sistem masing-masing</p>
+    </div>
+    <div class="login-body">
+      <form id="loginForm">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="username" autocomplete="username" placeholder="Contoh: cikguali">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="pass-field">
+            <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="pass-toggle" id="togglePass"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-right-to-bracket"></i> Log Masuk</button>
+        <div class="msg" id="loginMsg"></div>
+      </form>
+      <p class="help-text">Masukkan username &amp; password yang diberikan oleh admin sekolah anda. Anda akan dialihkan secara automatik ke sistem EduTrack anda sendiri di tab baharu.</p>
+    </div>
+  </div>
+</div>
+
+<button class="admin-link" id="adminGear" title="Tetapan Admin"><i class="fas fa-gear"></i></button>
+
+<!-- MODAL: ADMIN AUTH -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-head">
+      <h2><i class="fas fa-lock" style="color:var(--primary);"></i> Akses Admin</h2>
+      <button class="modal-close" id="authClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="auth-box" id="authFirstRun" style="display:none;">
+      <i class="fas fa-key"></i>
+      <p>Ini pertama kali sistem digunakan. Sila tetapkan password admin untuk menguruskan senarai guru.</p>
+      <div class="field" style="text-align:left;">
+        <label>Password Admin Baharu</label>
+        <input type="password" id="newAdminPass" placeholder="Minimum 4 aksara">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="setAdminPassBtn"><i class="fas fa-check"></i> Tetapkan Password</button>
+    </div>
+    <div class="auth-box" id="authNormal">
+      <i class="fas fa-shield-halved"></i>
+      <p>Masukkan password admin untuk menguruskan senarai guru &amp; web masing-masing.</p>
+      <div class="field" style="text-align:left;">
+        <label>Password Admin</label>
+        <input type="password" id="adminPassInput" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkAdminPassBtn"><i class="fas fa-right-to-bracket"></i> Masuk</button>
+      <div class="msg" id="authMsg" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADMIN PANEL -->
+<div class="modal-overlay" id="panelModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2><i class="fas fa-users-gear" style="color:var(--primary);"></i> Urus Guru</h2>
+      <button class="modal-close" id="panelClose"><i class="fas fa-xmark"></i></button>
+    </div>
+
+    <div class="top-actions">
+      <span class="badge-count" id="teacherCount">0 guru berdaftar</span>
+      <button class="btn btn-primary" id="showAddFormBtn"><i class="fas fa-plus"></i> Tambah Guru</button>
+    </div>
+
+    <div class="add-form" id="addForm">
+      <input type="hidden" id="editId">
+      <div>
+        <label>Nama Guru</label>
+        <input type="text" id="f_nama" placeholder="Cikgu Ali">
+      </div>
+      <div>
+        <label>Username</label>
+        <input type="text" id="f_username" placeholder="cikguali">
+      </div>
+      <div>
+        <label>Password</label>
+        <input type="text" id="f_password" placeholder="password123">
+      </div>
+      <div>
+        <label>URL Web EduTrack Guru</label>
+        <input type="text" id="f_url" placeholder="https://cikguali-edutrack.example.com">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="cancelFormBtn">Batal</button>
+        <button type="button" class="btn btn-success" id="saveTeacherBtn"><i class="fas fa-check"></i> Simpan</button>
+      </div>
+    </div>
+
+    <div class="section-title">Senarai Guru</div>
+    <div id="teacherList"></div>
+
+    <div class="settings-line">
+      <span><i class="fas fa-key" style="color:var(--muted);margin-right:6px;"></i>Tukar password admin</span>
+      <button class="btn btn-ghost" id="changeAdminPassBtn">Tukar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'edutrack-teachers-v1';
+const ADMIN_KEY = 'edutrack-admin-pass-v1';
+
+let teachers = [];
+let adminPass = null;
+
+const $ = id => document.getElementById(id);
+
+function normalizeUrl(u){
+  u = (u||'').trim();
+  if(!u) return '';
+  if(!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  return u;
+}
+
+function showMsg(el, type, text){
+  el.className = 'msg show ' + type;
+  el.innerHTML = (type==='error' ? '<i class="fas fa-circle-exclamation"></i> ' : '<i class="fas fa-circle-check"></i> ') + text;
+}
+function hideMsg(el){ el.className = 'msg'; el.innerHTML=''; }
+
+async function loadData(){
+  try{
+    const t = await window.storage.get(STORAGE_KEY, true);
+    teachers = t && t.value ? JSON.parse(t.value) : [];
+  }catch(e){ teachers = []; }
+  try{
+    const p = await window.storage.get(ADMIN_KEY, true);
+    adminPass = p && p.value ? p.value : null;
+  }catch(e){ adminPass = null; }
+}
+
+async function saveTeachers(){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(teachers), true); }
+  catch(e){ alert('Gagal menyimpan data. Sila cuba lagi.'); }
+}
+async function saveAdminPass(pw){
+  try{ await window.storage.set(ADMIN_KEY, pw, true); adminPass = pw; }
+  catch(e){ alert('Gagal menyimpan password admin.'); }
+}
+
+/* ===== LOGIN ===== */
+$('togglePass').addEventListener('click', ()=>{
+  const inp = $('password');
+  const icon = $('togglePass').querySelector('i');
+  if(inp.type==='password'){ inp.type='text'; icon.className='fas fa-eye-slash'; }
+  else { inp.type='password'; icon.className='fas fa-eye'; }
+});
+
+$('loginForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const msg = $('loginMsg');
+  hideMsg(msg);
+  const u = $('username').value.trim();
+  const p = $('password').value;
+  if(!u || !p){ showMsg(msg,'error','Sila isi username dan password.'); return; }
+
+  const btn = $('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyemak...';
+
+  await loadData();
+  const match = teachers.find(t => t.username.toLowerCase() === u.toLowerCase() && t.password === p);
+
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Log Masuk';
+
+  if(!match){ showMsg(msg,'error','Username atau password salah.'); return; }
+  const url = normalizeUrl(match.url);
+  if(!url){ showMsg(msg,'error','URL web untuk guru ini belum ditetapkan. Sila hubungi admin.'); return; }
+
+  showMsg(msg,'success', 'Log masuk berjaya! Mengalihkan ke portal ' + (match.nama || match.username) + '...');
+  setTimeout(()=>{ window.open(url, '_blank'); }, 800);
+});
+
+/* ===== ADMIN AUTH ===== */
+$('adminGear').addEventListener('click', async ()=>{
+  await loadData();
+  $('authModal').classList.add('show');
+  if(!adminPass){
+    $('authFirstRun').style.display = 'block';
+    $('authNormal').style.display = 'none';
+  } else {
+    $('authFirstRun').style.display = 'none';
+    $('authNormal').style.display = 'block';
+    $('adminPassInput').value = '';
+    hideMsg($('authMsg'));
+  }
+});
+$('authClose').addEventListener('click', ()=> $('authModal').classList.remove('show'));
+
+$('setAdminPassBtn').addEventListener('click', async ()=>{
+  const pw = $('newAdminPass').value;
+  if(!pw || pw.length < 4){ alert('Password mesti sekurang-kurangnya 4 aksara.'); return; }
+  await saveAdminPass(pw);
+  $('authModal').classList.remove('show');
+  openPanel();
+});
+
+$('checkAdminPassBtn').addEventListener('click', ()=>{
+  const pw = $('adminPassInput').value;
+  if(pw === adminPass){
+    $('authModal').classList.remove('show');
+    openPanel();
+  } else {
+    showMsg($('authMsg'),'error','Password admin salah.');
+  }
+});
+
+/* ===== ADMIN PANEL ===== */
+function openPanel(){
+  $('panelModal').classList.add('show');
+  renderTeacherList();
+  hideAddForm();
+}
+$('panelClose').addEventListener('click', ()=> $('panelModal').classList.remove('show'));
+
+function renderTeacherList(){
+  const wrap = $('teacherList');
+  $('teacherCount').textContent = teachers.length + ' guru berdaftar';
+  if(teachers.length === 0){
+    wrap.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>Belum ada guru didaftarkan. Klik "Tambah Guru" untuk mula.</div>';
+    return;
+  }
+  wrap.innerHTML = teachers.map(t => `
+    <div class="teacher-row">
+      <div class="cell-name">${escapeHtml(t.nama || t.username)}</div>
+      <div>${escapeHtml(t.username)}</div>
+      <div class="cell-url" title="${escapeHtml(t.url)}">${escapeHtml(t.url)}</div>
+      <div class="row-actions">
+        <button class="icon-btn edit" data-id="${t.id}" title="Sunting"><i class="fas fa-pen"></i></button>
+        <button class="icon-btn del" data-id="${t.id}" title="Padam"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('.icon-btn.edit').forEach(b=>{
+    b.addEventListener('click', ()=> editTeacher(b.dataset.id));
+  });
+  wrap.querySelectorAll('.icon-btn.del').forEach(b=>{
+    b.addEventListener('click', ()=> deleteTeacher(b.dataset.id));
+  });
+}
+
+function escapeHtml(s){
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showAddForm(){ $('addForm').classList.add('show'); }
+function hideAddForm(){
+  $('addForm').classList.remove('show');
+  $('editId').value = '';
+  $('f_nama').value = ''; $('f_username').value = ''; $('f_password').value = ''; $('f_url').value = '';
+}
+
+$('showAddFormBtn').addEventListener('click', ()=>{
+  hideAddForm();
+  showAddForm();
+});
+$('cancelFormBtn').addEventListener('click', hideAddForm);
+
+function editTeacher(id){
+  const t = teachers.find(x => x.id === id);
+  if(!t) return;
+  $('editId').value = t.id;
+  $('f_nama').value = t.nama || '';
+  $('f_username').value = t.username;
+  $('f_password').value = t.password;
+  $('f_url').value = t.url;
+  showAddForm();
+  $('addForm').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+async function deleteTeacher(id){
+  const t = teachers.find(x => x.id === id);
+  if(!t) return;
+  if(!confirm('Padam akaun "' + (t.nama || t.username) + '"?')) return;
+  teachers = teachers.filter(x => x.id !== id);
+  await saveTeachers();
+  renderTeacherList();
+}
+
+$('saveTeacherBtn').addEventListener('click', async ()=>{
+  const nama = $('f_nama').value.trim();
+  const username = $('f_username').value.trim();
+  const password = $('f_password').value.trim();
+  const url = normalizeUrl($('f_url').value.trim());
+  const editId = $('editId').value;
+
+  if(!username || !password || !url){
+    alert('Sila lengkapkan Username, Password dan URL Web.');
+    return;
+  }
+  const dup = teachers.find(t => t.username.toLowerCase() === username.toLowerCase() && t.id !== editId);
+  if(dup){ alert('Username ini sudah digunakan oleh guru lain.'); return; }
+
+  if(editId){
+    const t = teachers.find(x => x.id === editId);
+    if(t){ t.nama = nama; t.username = username; t.password = password; t.url = url; }
+  } else {
+    teachers.push({ id: 'tc_' + Date.now(), nama, username, password, url });
+  }
+  await saveTeachers();
+  hideAddForm();
+  renderTeacherList();
+});
+
+$('changeAdminPassBtn').addEventListener('click', async ()=>{
+  const cur = prompt('Masukkan password admin semasa:');
+  if(cur === null) return;
+  if(cur !== adminPass){ alert('Password semasa salah.'); return; }
+  const next = prompt('Masukkan password admin baharu (minimum 4 aksara):');
+  if(next === null) return;
+  if(next.length < 4){ alert('Password mesti sekurang-kurangnya 4 aksara.'); return; }
+  await saveAdminPass(next);
+  alert('Password admin berjaya dikemaskini.');
+});
+
+/* close modals on outside click */
+[$('authModal'), $('panelModal')].forEach(m=>{
+  m.addEventListener('click', (e)=>{ if(e.target === m) m.classList.remove('show'); });
+});
+
+loadData();
+</script>
+</body>
+</html>
