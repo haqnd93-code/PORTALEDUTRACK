@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>EduTrack Portal</title>
+<title>EduTrack</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -111,7 +111,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="login-hero">
       <div class="login-logo"><i class="fas fa-graduation-cap"></i></div>
       <h1>EduTrack Portal</h1>
-      <p>Satu portal, semua guru, sistem masing-masing</p>
+      <p>Memperkasa Institusi, Menjana Generasi Berprestasi</p>
     </div>
     <div class="login-body">
       <form id="loginForm">
@@ -119,105 +119,37 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <label>Username</label>
           <input type="text" id="username" autocomplete="username" placeholder="Contoh: cikguali">
         </div>
-        <div class="field">
-          <label>Password</label>
-          <div class="pass-field">
-            <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
-            <button type="button" class="pass-toggle" id="togglePass"><i class="fas fa-eye"></i></button>
-          </div>
-        </div>
         <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-right-to-bracket"></i> Log Masuk</button>
         <div class="msg" id="loginMsg"></div>
       </form>
-      <p class="help-text">Masukkan username &amp; password yang diberikan oleh admin sekolah anda. Anda akan dialihkan secara automatik ke sistem EduTrack anda sendiri di tab baharu.</p>
-    </div>
-  </div>
-</div>
-
-<button class="admin-link" id="adminGear" title="Tetapan Admin"><i class="fas fa-gear"></i></button>
-
-<!-- MODAL: ADMIN AUTH -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal-box" style="width:420px;">
-    <div class="modal-head">
-      <h2><i class="fas fa-lock" style="color:var(--primary);"></i> Akses Admin</h2>
-      <button class="modal-close" id="authClose"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="auth-box" id="authFirstRun" style="display:none;">
-      <i class="fas fa-key"></i>
-      <p>Ini pertama kali sistem digunakan. Sila tetapkan password admin untuk menguruskan senarai guru.</p>
-      <div class="field" style="text-align:left;">
-        <label>Password Admin Baharu</label>
-        <input type="password" id="newAdminPass" placeholder="Minimum 4 aksara">
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="setAdminPassBtn"><i class="fas fa-check"></i> Tetapkan Password</button>
-    </div>
-    <div class="auth-box" id="authNormal">
-      <i class="fas fa-shield-halved"></i>
-      <p>Masukkan password admin untuk menguruskan senarai guru &amp; web masing-masing.</p>
-      <div class="field" style="text-align:left;">
-        <label>Password Admin</label>
-        <input type="password" id="adminPassInput" placeholder="••••••••">
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkAdminPassBtn"><i class="fas fa-right-to-bracket"></i> Masuk</button>
-      <div class="msg" id="authMsg" style="margin-top:12px;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: ADMIN PANEL -->
-<div class="modal-overlay" id="panelModal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h2><i class="fas fa-users-gear" style="color:var(--primary);"></i> Urus Guru</h2>
-      <button class="modal-close" id="panelClose"><i class="fas fa-xmark"></i></button>
-    </div>
-
-    <div class="top-actions">
-      <span class="badge-count" id="teacherCount">0 guru berdaftar</span>
-      <button class="btn btn-primary" id="showAddFormBtn"><i class="fas fa-plus"></i> Tambah Guru</button>
-    </div>
-
-    <div class="add-form" id="addForm">
-      <input type="hidden" id="editId">
-      <div>
-        <label>Nama Guru</label>
-        <input type="text" id="f_nama" placeholder="Cikgu Ali">
-      </div>
-      <div>
-        <label>Username</label>
-        <input type="text" id="f_username" placeholder="cikguali">
-      </div>
-      <div>
-        <label>Password</label>
-        <input type="text" id="f_password" placeholder="password123">
-      </div>
-      <div>
-        <label>URL Web EduTrack Guru</label>
-        <input type="text" id="f_url" placeholder="https://cikguali-edutrack.example.com">
-      </div>
-      <div class="actions">
-        <button type="button" class="btn btn-ghost" id="cancelFormBtn">Batal</button>
-        <button type="button" class="btn btn-success" id="saveTeacherBtn"><i class="fas fa-check"></i> Simpan</button>
-      </div>
-    </div>
-
-    <div class="section-title">Senarai Guru</div>
-    <div id="teacherList"></div>
-
-    <div class="settings-line">
-      <span><i class="fas fa-key" style="color:var(--muted);margin-right:6px;"></i>Tukar password admin</span>
-      <button class="btn btn-ghost" id="changeAdminPassBtn">Tukar</button>
+      <p class="help-text">Masukkan username yang diberikan oleh admin sekolah anda. Anda akan dialihkan secara automatik ke sistem EduTrack anda sendiri di tab baharu.</p>
     </div>
   </div>
 </div>
 
 <script>
-const STORAGE_KEY = 'edutrack-teachers-v1';
-const ADMIN_KEY = 'edutrack-admin-pass-v1';
-
-let teachers = [];
-let adminPass = null;
+/* ============================================================
+   SENARAI GURU — edit terus di sini untuk tambah/ubah/padam guru.
+   Salin-tampal satu blok { ... } baharu untuk setiap guru.
+   Tiada storan luaran digunakan — semua data ada dalam fail ini.
+   ============================================================ */
+const teachers = [
+  {
+    nama: 'Cikgu Ali',
+    username: 'cikguali',
+    url: 'https://cikguali-edutrack.example.com'
+  },
+  {
+    nama: 'Cikgu Siti',
+    username: 'cikgusiti',
+    url: 'https://cikgusiti-edutrack.example.com'
+  },
+    nama: 'NASRULHAQ',
+    username: 'HAQHENSEM',
+    url: 'https://pbd-202661.vercel.app/'
+  },
+  // Tambah guru baharu di sini, ikut format di atas, pisahkan dengan koma.
+];
 
 const $ = id => document.getElementById(id);
 
@@ -234,51 +166,23 @@ function showMsg(el, type, text){
 }
 function hideMsg(el){ el.className = 'msg'; el.innerHTML=''; }
 
-async function loadData(){
-  try{
-    const t = localStorage.getItem(STORAGE_KEY);
-    teachers = t ? JSON.parse(t) : [];
-  }catch(e){ teachers = []; }
-  try{
-    const p = localStorage.getItem(ADMIN_KEY);
-    adminPass = p || null;
-  }catch(e){ adminPass = null; }
-}
-
-async function saveTeachers(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(teachers)); }
-  catch(e){ alert('Gagal menyimpan data. Sila cuba lagi.'); }
-}
-async function saveAdminPass(pw){
-  try{ localStorage.setItem(ADMIN_KEY, pw); adminPass = pw; }
-  catch(e){ alert('Gagal menyimpan password admin.'); }
-}
-
 /* ===== LOGIN ===== */
-$('togglePass').addEventListener('click', ()=>{
-  const inp = $('password');
-  const icon = $('togglePass').querySelector('i');
-  if(inp.type==='password'){ inp.type='text'; icon.className='fas fa-eye-slash'; }
-  else { inp.type='password'; icon.className='fas fa-eye'; }
-});
 
-$('loginForm').addEventListener('submit', async (e)=>{
+$('loginForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const msg = $('loginMsg');
   hideMsg(msg);
   const u = $('username').value.trim();
-  const p = $('password').value;
-  if(!u || !p){ showMsg(msg,'error','Sila isi username dan password.'); return; }
+  if(!u){ showMsg(msg,'error','Sila isi username.'); return; }
 
   const btn = $('loginBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyemak...';
 
-  await loadData();
-  const match = teachers.find(t => t.username.toLowerCase() === u.toLowerCase() && t.password === p);
+  const match = teachers.find(t => t.username.toLowerCase() === u.toLowerCase());
 
   btn.disabled = false; btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Log Masuk';
 
-  if(!match){ showMsg(msg,'error','Username atau password salah.'); return; }
+  if(!match){ showMsg(msg,'error','Username tidak dijumpai.'); return; }
   const url = normalizeUrl(match.url);
   if(!url){ showMsg(msg,'error','URL web untuk guru ini belum ditetapkan. Sila hubungi admin.'); return; }
 
@@ -286,155 +190,7 @@ $('loginForm').addEventListener('submit', async (e)=>{
   setTimeout(()=>{ window.open(url, '_blank'); }, 800);
 });
 
-/* ===== ADMIN AUTH ===== */
-$('adminGear').addEventListener('click', async ()=>{
-  await loadData();
-  $('authModal').classList.add('show');
-  if(!adminPass){
-    $('authFirstRun').style.display = 'block';
-    $('authNormal').style.display = 'none';
-  } else {
-    $('authFirstRun').style.display = 'none';
-    $('authNormal').style.display = 'block';
-    $('adminPassInput').value = '';
-    hideMsg($('authMsg'));
-  }
-});
-$('authClose').addEventListener('click', ()=> $('authModal').classList.remove('show'));
 
-$('setAdminPassBtn').addEventListener('click', async ()=>{
-  const pw = $('newAdminPass').value;
-  if(!pw || pw.length < 4){ alert('Password mesti sekurang-kurangnya 4 aksara.'); return; }
-  await saveAdminPass(pw);
-  $('authModal').classList.remove('show');
-  openPanel();
-});
-
-$('checkAdminPassBtn').addEventListener('click', ()=>{
-  const pw = $('adminPassInput').value;
-  if(pw === adminPass){
-    $('authModal').classList.remove('show');
-    openPanel();
-  } else {
-    showMsg($('authMsg'),'error','Password admin salah.');
-  }
-});
-
-/* ===== ADMIN PANEL ===== */
-function openPanel(){
-  $('panelModal').classList.add('show');
-  renderTeacherList();
-  hideAddForm();
-}
-$('panelClose').addEventListener('click', ()=> $('panelModal').classList.remove('show'));
-
-function renderTeacherList(){
-  const wrap = $('teacherList');
-  $('teacherCount').textContent = teachers.length + ' guru berdaftar';
-  if(teachers.length === 0){
-    wrap.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>Belum ada guru didaftarkan. Klik "Tambah Guru" untuk mula.</div>';
-    return;
-  }
-  wrap.innerHTML = teachers.map(t => `
-    <div class="teacher-row">
-      <div class="cell-name">${escapeHtml(t.nama || t.username)}</div>
-      <div>${escapeHtml(t.username)}</div>
-      <div class="cell-url" title="${escapeHtml(t.url)}">${escapeHtml(t.url)}</div>
-      <div class="row-actions">
-        <button class="icon-btn edit" data-id="${t.id}" title="Sunting"><i class="fas fa-pen"></i></button>
-        <button class="icon-btn del" data-id="${t.id}" title="Padam"><i class="fas fa-trash"></i></button>
-      </div>
-    </div>
-  `).join('');
-
-  wrap.querySelectorAll('.icon-btn.edit').forEach(b=>{
-    b.addEventListener('click', ()=> editTeacher(b.dataset.id));
-  });
-  wrap.querySelectorAll('.icon-btn.del').forEach(b=>{
-    b.addEventListener('click', ()=> deleteTeacher(b.dataset.id));
-  });
-}
-
-function escapeHtml(s){
-  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function showAddForm(){ $('addForm').classList.add('show'); }
-function hideAddForm(){
-  $('addForm').classList.remove('show');
-  $('editId').value = '';
-  $('f_nama').value = ''; $('f_username').value = ''; $('f_password').value = ''; $('f_url').value = '';
-}
-
-$('showAddFormBtn').addEventListener('click', ()=>{
-  hideAddForm();
-  showAddForm();
-});
-$('cancelFormBtn').addEventListener('click', hideAddForm);
-
-function editTeacher(id){
-  const t = teachers.find(x => x.id === id);
-  if(!t) return;
-  $('editId').value = t.id;
-  $('f_nama').value = t.nama || '';
-  $('f_username').value = t.username;
-  $('f_password').value = t.password;
-  $('f_url').value = t.url;
-  showAddForm();
-  $('addForm').scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-async function deleteTeacher(id){
-  const t = teachers.find(x => x.id === id);
-  if(!t) return;
-  if(!confirm('Padam akaun "' + (t.nama || t.username) + '"?')) return;
-  teachers = teachers.filter(x => x.id !== id);
-  await saveTeachers();
-  renderTeacherList();
-}
-
-$('saveTeacherBtn').addEventListener('click', async ()=>{
-  const nama = $('f_nama').value.trim();
-  const username = $('f_username').value.trim();
-  const password = $('f_password').value.trim();
-  const url = normalizeUrl($('f_url').value.trim());
-  const editId = $('editId').value;
-
-  if(!username || !password || !url){
-    alert('Sila lengkapkan Username, Password dan URL Web.');
-    return;
-  }
-  const dup = teachers.find(t => t.username.toLowerCase() === username.toLowerCase() && t.id !== editId);
-  if(dup){ alert('Username ini sudah digunakan oleh guru lain.'); return; }
-
-  if(editId){
-    const t = teachers.find(x => x.id === editId);
-    if(t){ t.nama = nama; t.username = username; t.password = password; t.url = url; }
-  } else {
-    teachers.push({ id: 'tc_' + Date.now(), nama, username, password, url });
-  }
-  await saveTeachers();
-  hideAddForm();
-  renderTeacherList();
-});
-
-$('changeAdminPassBtn').addEventListener('click', async ()=>{
-  const cur = prompt('Masukkan password admin semasa:');
-  if(cur === null) return;
-  if(cur !== adminPass){ alert('Password semasa salah.'); return; }
-  const next = prompt('Masukkan password admin baharu (minimum 4 aksara):');
-  if(next === null) return;
-  if(next.length < 4){ alert('Password mesti sekurang-kurangnya 4 aksara.'); return; }
-  await saveAdminPass(next);
-  alert('Password admin berjaya dikemaskini.');
-});
-
-/* close modals on outside click */
-[$('authModal'), $('panelModal')].forEach(m=>{
-  m.addEventListener('click', (e)=>{ if(e.target === m) m.classList.remove('show'); });
-});
-
-loadData();
 </script>
 </body>
 </html>
